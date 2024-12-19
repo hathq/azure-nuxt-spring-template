@@ -3,11 +3,11 @@ FROM node:23.4-alpine3.21 AS build
 WORKDIR /app
 
 # package.jsonとyarn.lockを先にCOPYしてyarn install (キャッシュの有効活用)
-COPY package.json yarn.lock ./
+COPY frontend/package.json frontend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # ソースコードコピー
-COPY . .
+COPY frontend .
 
 # Nuxt3 SSGビルド（.output/publicに静的ファイル出力）
 RUN yarn build

@@ -1,10 +1,10 @@
 # ビルドステージ：AlpineベースJDK
 FROM eclipse-temurin:21-jdk-alpine as builder
 WORKDIR /app
-COPY pom.xml .
+COPY backend/pom.xml .
 RUN apk add --no-cache maven && mvn dependency:go-offline
 
-COPY src ./src
+COPY backend/src ./src
 RUN mvn clean package -DskipTests=false
 
 # ランタイムステージ：AlpineベースJRE(またはDistroless)
