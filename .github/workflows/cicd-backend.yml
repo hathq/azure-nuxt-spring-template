@@ -10,7 +10,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Maven依存関係キャッシュ（シークレットのログ出力なし）
+      # Maven依存関係キャッシュ
       - name: Cache Maven Dependencies
         uses: actions/cache@v3
         with:
@@ -18,20 +18,20 @@ jobs:
           key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: maven-
 
-      # バックエンドビルド・テスト (Secretsを出力しない)
+      # バックエンドビルド・テスト
       - name: Build & Test backend
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/app \
             -w /app/backend \
-            eclipse-temurin:17-jdk-alpine sh -c "apk add --no-cache maven && mvn clean package -DskipTests=false"
+            eclipse-temurin:21-jdk-alpine sh -c "apk add --no-cache maven && mvn clean package -DskipTests=false"
 
-      # Dockerマルチステージビルド - シークレット出力なし
+      # Dockerマルチステージビルド
       - name: Docker Build (Multi-stage)
         run: |
           docker build -t my-backend:latest -f backend/Dockerfile .
 
-      # Azure OIDC Login - シークレットを直接参照、ログ出力せず
+      # Azure OIDC Login
       - name: Azure Login via OIDC
         uses: azure/login@v1
         with:
@@ -42,7 +42,7 @@ jobs:
       - name: ACR Login
         run: az acr login --name myappacrdev
 
-      # ACRへのPush、Secretsは出力しない
+      # ACRへのPush
       - name: Push Image
         run: |
           docker tag my-backend:latest myappacrdev.azurecr.io/my-backend:latest

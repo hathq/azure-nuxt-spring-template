@@ -25,7 +25,7 @@ jobs:
       - name: Set environment variable
         run: echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
 
-      # Bicepでインフラデプロイ（Secretsを出力しない）
+      # Bicepでインフラデプロイ
       - name: Deploy Infrastructure using Bicep
         run: |
           az deployment sub create \

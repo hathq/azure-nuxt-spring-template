@@ -23,7 +23,7 @@ jobs:
         run: |
           docker build -t my-frontend:latest -f frontend/Dockerfile .
 
-      # Azure OIDC Login (シークレットはアクションに直接渡す、ログ出力なし)
+      # Azure OIDC Login
       - name: Azure Login via OIDC
         uses: azure/login@v1
         with:
@@ -31,7 +31,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # ACRログイン - シークレット等を出力しない
+      # ACRログイン
       - name: ACR Login
         run: az acr login --name myappacrdev
 
@@ -40,7 +40,7 @@ jobs:
           docker tag my-frontend:latest myappacrdev.azurecr.io/my-frontend:latest
           docker push myappacrdev.azurecr.io/my-frontend:latest
 
-      # App Serviceデプロイ - Secretsはログ出力しない
+      # App Serviceデプロイ
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v2
         with:
