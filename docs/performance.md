@@ -6,7 +6,7 @@
 
 ### コンテナイメージの軽量化
 
-- **Alpineベースイメージ**: `node:18-alpine`, `eclipse-temurin:17-jdk-alpine`  
+- **Alpineベースイメージ**: `node:18-alpine`, `eclipse-temurin21-jdk-alpine`  
   コンパクトなベースイメージにより、ビルド時間・プル時間を短縮
 - **マルチステージビルド**:  
   ビルド用ステージでMavenやnpmインストールを行い、最終ステージでは実行に必要なバイナリのみをコピーしてイメージサイズを削減

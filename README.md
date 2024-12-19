@@ -6,7 +6,7 @@
 ## 主な特徴
 
 - **フロントエンド**: Nuxt.js (SSG対応)  
-- **バックエンド**: Spring Boot (Java 17), Cosmos DB接続対応  
+- **バックエンド**: Spring Boot (Java 21), Cosmos DB接続対応  
 - **インフラ定義**: BicepによるIaCでResource Group, ACR, App Service, Cosmos DB, Key Vault, App Config, App Insightsを一括デプロイ  
 - **CI/CD**: GitHub Actionsを使用した、自動ビルド・テスト・デプロイパイプライン  
 - **セキュリティ**: Key Vault, Managed Identity, OIDCフェデレーションでシークレットレスな安全性確保  
