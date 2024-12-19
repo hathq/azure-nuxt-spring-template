@@ -1,10 +1,8 @@
 # ビルドステージ：Node 18 Alpineベース
 FROM node:22-alpine AS builder
 WORKDIR /app
-COPY package*.json .
-RUN yarn install
 COPY . .
-RUN yarn build # NuxtのSSG出力: .output/public
+RUN yarn install && yarn build
 
 # 実行ステージ：Nginx Alpineイメージ
 FROM nginx:alpine

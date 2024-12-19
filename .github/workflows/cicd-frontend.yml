@@ -16,7 +16,7 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}/frontend:/app \
             -w /app \
-            node:18-alpine sh -c "yarn install && yarn build"
+            node:22-alpine sh -c "yarn install && yarn build"
       
       # Dockerビルド
       - name: Docker Build (Multi-stage)
