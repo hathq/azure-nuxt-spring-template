@@ -2,9 +2,8 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json .
-RUN npm ci
 COPY . .
-RUN npm run build # NuxtのSSG出力: .output/public
+RUN yarn build # NuxtのSSG出力: .output/public
 
 # 実行ステージ：Nginx Alpineイメージ
 FROM nginx:alpine
