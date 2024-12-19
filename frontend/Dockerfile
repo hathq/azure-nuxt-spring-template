@@ -1,5 +1,5 @@
 # ビルドステージ：Node 22 Alpineベース
-FROM node:22-alpine AS build
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 # package.jsonとyarn.lockを先にCOPYしてyarn install (キャッシュの有効活用)
