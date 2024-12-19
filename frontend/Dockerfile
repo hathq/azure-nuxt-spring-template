@@ -2,6 +2,7 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json .
+RUN yarn install
 COPY . .
 RUN yarn build # NuxtのSSG出力: .output/public
 
