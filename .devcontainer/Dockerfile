@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/devcontainers/base:latest
 
 # Node.js (Using nvm)
 RUN apt-get update && apt-get install -y curl build-essential git \
-    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm@latest yarn nuxt
 
