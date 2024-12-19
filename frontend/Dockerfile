@@ -13,7 +13,7 @@ COPY frontend .
 RUN yarn build
 
 # 実行ステージ：Nginx Alpineイメージ
-FROM nginx:alpine
+FROM nginx:1.27.3-alpine-slim
 COPY --from=builder /app/.output/public /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
