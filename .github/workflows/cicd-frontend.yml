@@ -1,0 +1,48 @@
+name: CI/CD Frontend
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # フロントエンドビルド・テスト
+      - name: Build & Test frontend
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/frontend:/app \
+            -w /app \
+            node:18-alpine sh -c "npm ci && npm run test && npm run build"
+      
+      # Dockerビルド
+      - name: Docker Build (Multi-stage)
+        run: |
+          docker build -t my-frontend:latest -f frontend/Dockerfile .
+
+      # Azure OIDC Login (シークレットはアクションに直接渡す、ログ出力なし)
+      - name: Azure Login via OIDC
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # ACRログイン - シークレット等を出力しない
+      - name: ACR Login
+        run: az acr login --name myappacrdev
+
+      - name: Push Image to ACR
+        run: |
+          docker tag my-frontend:latest myappacrdev.azurecr.io/my-frontend:latest
+          docker push myappacrdev.azurecr.io/my-frontend:latest
+
+      # App Serviceデプロイ - Secretsはログ出力しない
+      - name: Deploy to App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'myapp-frontend-dev'
+          images: 'myappacrdev.azurecr.io/my-frontend:latest'

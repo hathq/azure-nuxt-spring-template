@@ -1,0 +1,32 @@
+{
+    "name": "Azure Nuxt/Java Dev Environment",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shellIntegration.enabled": true,
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        },
+        "extensions": [
+            "ms-azuretools.vscode-azurecli",
+            "ms-vscode.azure-account",
+            "vscjava.vscode-java-pack",
+            "ms-azuretools.vscode-docker",
+            "esbenp.prettier-vscode",
+            "bierner.markdown-mermaid",
+            "editorconfig.editorconfig"
+        ]
+    },
+    "forwardPorts": [
+        3000,
+        8080
+    ],
+	"postCreateCommand": "yarn install --prefix frontend && mvn -f backend/pom.xml  dependency:go-offline",
+	"postStartCommand": ". /workspace/gitconfig.env && git config --global user.name \"$GIT_USER\" && git config --global user.email \"$GIT_EMAIL\"",
+	"mounts": [
+		"source=${localWorkspaceFolder}/gitconfig.env,target=/workspace/gitconfig.env,type=bind,consistency=cached"
+	],
+    "remoteUser": "vscode"
+}

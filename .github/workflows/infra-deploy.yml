@@ -1,0 +1,34 @@
+name: Infra Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment (dev|stg|prod)'
+        required: true
+        default: 'dev'
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # AzureへのOIDCログイン - Secretsは直接アクションのwithで指定
+      - name: Azure Login via OIDC
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set environment variable
+        run: echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+
+      # Bicepでインフラデプロイ（Secretsを出力しない）
+      - name: Deploy Infrastructure using Bicep
+        run: |
+          az deployment sub create \
+            --location "japaneast" \
+            --template-file ./infra/main.bicep \
+            --parameters @infra/parameters/${{ env.ENVIRONMENT }}.json
