@@ -1,8 +1,16 @@
 # ビルドステージ：Node 18 Alpineベース
-FROM node:22-alpine AS builder
+FROM node:22-alpine AS build
 WORKDIR /app
+
+# package.jsonとyarn.lockを先にCOPYしてyarn install (キャッシュの有効活用)
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+# ソースコードコピー
 COPY . .
-RUN yarn install && yarn build
+
+# Nuxt3 SSGビルド（.output/publicに静的ファイル出力）
+RUN yarn build
 
 # 実行ステージ：Nginx Alpineイメージ
 FROM nginx:alpine
