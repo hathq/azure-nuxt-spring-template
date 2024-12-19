@@ -1,16 +1,29 @@
 FROM mcr.microsoft.com/devcontainers/base:latest
 
 # 開発環境で必要なツールをインストール
-# Node.js, NPM, Java 17, Maven, Docker CLI, Azure CLI など
+# Node.js, NPM, Java 21, Maven, Docker CLI, Azure CLI など
 
 # Node.js (Using nvm)
 RUN apt-get update && apt-get install -y curl build-essential git \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g npm@latest
+    && npm install -g npm@latest yarn nuxt
 
-# Java 17 (Temurin or default-jdk)
-RUN apt-get update && apt-get install -y openjdk-21-jdk maven
+# Eclipse Temurin JDK 21 (Adoptium) ダウンロード & インストール
+RUN curl -fsSL "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk" -o /tmp/jdk21.tar.gz \
+    && mkdir /opt/jdk-21 \
+    && tar xf /tmp/jdk21.tar.gz -C /opt/jdk-21 --strip-components=1 \
+    && rm /tmp/jdk21.tar.gz \
+    && update-alternatives --install /usr/bin/java java /opt/jdk-21/bin/java 1 \
+    && update-alternatives --install /usr/bin/javac javac /opt/jdk-21/bin/javac 1
+
+# Mavenをインストール
+RUN apt-get update && apt-get install -y maven \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# JAVA_HOMEをJDK21のディレクトリに設定
+ENV JAVA_HOME=/opt/jdk-21
+ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Docker CLI
 RUN apt-get update && apt-get install -y docker.io
@@ -20,18 +33,6 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ユーザーvscodeでログイン
-ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=1000
-
-# vscodeユーザ作成 (devcontainersベースイメージはすでにユーザ作成済みが多い)
-# 念のため確認
-RUN groupadd --gid $USER_GID $USERNAME || true
-RUN useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME || true
-
-USER $USERNAME
 
 WORKDIR /workspaces
 

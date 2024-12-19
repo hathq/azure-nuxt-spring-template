@@ -23,10 +23,8 @@
         3000,
         8080
     ],
-	"postCreateCommand": "yarn install --prefix frontend && mvn -f backend/pom.xml  dependency:go-offline",
-	"postStartCommand": ". /workspace/gitconfig.env && git config --global user.name \"$GIT_USER\" && git config --global user.email \"$GIT_EMAIL\"",
+	"postCreateCommand": "yarn install --prefix frontend && mvn -v",
 	"mounts": [
-		"source=${localWorkspaceFolder}/gitconfig.env,target=/workspace/gitconfig.env,type=bind,consistency=cached"
-	],
-    "remoteUser": "vscode"
+		"type=bind,source=/home/otsuka/.gitconfig,target=/home/vscode/.gitconfig"
+	]
 }
